@@ -1,0 +1,56 @@
+﻿@page
+@model IndexModel
+
+@inject ITaskService taskService
+
+<div class="container-fluid p-0 pb-3 mb-3 border-bottom">
+    <button class="btn btn-primary new-task-button">
+        <i class="bi bi-plus-circle me-1"></i>
+        Новая задача
+    </button>
+</div>
+
+<form class="new-task-form" method="POST" style="display: none;">
+    <div class="mb-3">
+        <label class="form-label">Название задачи:</label>
+        <input class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Описание задачи:</label>
+        <textarea class="form-control" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-plus-circle me-1"></i>
+            Создать
+        </button>
+    </div>
+</form>
+
+@foreach (UserTask task in taskService.GetTasks())
+{
+    <div class="card mb-3">
+        <div class="card-header">
+            <span>
+                <i class="bi bi-calendar-week"></i>
+                @task.CreatedAt.ToShortDateString()
+                <i class="bi bi-clock ms-3"></i>
+                @task.CreatedAt.ToShortTimeString()
+            </span>
+        </div>
+        <div class="card-body">
+            <p class="card-title fs-5">@task.Name</p>
+            <p class="card-text">
+                @(task.Description ?? "Описание отсутствует...")
+            </p>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $('.new-task-button').on('click', () => {
+            $('.new-task-form').toggle();
+        });
+    </script>
+}
