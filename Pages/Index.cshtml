@@ -10,14 +10,20 @@
     </button>
 </div>
 
-<form class="new-task-form" method="POST" style="display: none;">
+@{
+    string newTaskFormStyle = !Model.ShouldShowNewTaskForm ? "display: none;" : "";
+}
+
+<form class="new-task-form" method="POST" style="@newTaskFormStyle">
     <div class="mb-3">
-        <label class="form-label">Название задачи:</label>
-        <input class="form-control" />
+        <label class="form-label" asp-for="Name">Название задачи:</label>
+        <input class="form-control" asp-for="Name" />
+        <span class="text-danger" asp-validation-for="Name"></span>
     </div>
     <div class="mb-3">
-        <label class="form-label">Описание задачи:</label>
-        <textarea class="form-control" rows="3"></textarea>
+        <label class="form-label" asp-for="Description">Описание задачи:</label>
+        <textarea class="form-control" rows="3" asp-for="Description"></textarea>
+        <span class="text-danger" asp-validation-for="Description"></span>
     </div>
     <div class="mb-3">
         <button class="btn btn-primary" type="submit">
@@ -29,20 +35,47 @@
 
 @foreach (UserTask task in taskService.GetTasks())
 {
+    string statusCircleClass = task.IsDone ? "text-success" : "text-danger";
+
     <div class="card mb-3">
-        <div class="card-header">
+        <div class="card-header d-flex align-items-center">
             <span>
-                <i class="bi bi-calendar-week"></i>
+                <i class="bi bi-calendar-week me-1"></i>
                 @task.CreatedAt.ToShortDateString()
-                <i class="bi bi-clock ms-3"></i>
+                <i class="bi bi-clock ms-2 me-1"></i>
                 @task.CreatedAt.ToShortTimeString()
+                <i class="bi bi-circle-fill ms-2 me-1 @statusCircleClass"></i>
+                @(task.IsDone ? "Выполнена" : "Не выполнена")
             </span>
         </div>
         <div class="card-body">
-            <p class="card-title fs-5">@task.Name</p>
+            <p class="card-title fs-5 fw-bold">@task.Name</p>
             <p class="card-text">
-                @(task.Description ?? "Описание отсутствует...")
+                @if (task.Description != null)
+                {
+                    <text>@task.Description</text>
+                }
+                else
+                {
+                    <i class="text-secondary">Описание отсутствует...</i>
+                }
             </p>
+        </div>
+        <div class="card-footer d-flex flex-row-reverse gap-2">
+            @if (!task.IsDone)
+            {
+                <a class="btn btn-success" asp-page-handler="ChangeTaskStatus" asp-route-taskId="@task.Id">
+                    <i class="bi bi-check2 me-1"></i>
+                    Отметить
+                </a>
+            }
+            else
+            {
+                <a class="btn btn-danger" asp-page-handler="ChangeTaskStatus" asp-route-taskId="@task.Id">
+                    <i class="bi bi-x-lg me-1"></i>
+                    Снять метку
+                </a>
+            }
         </div>
     </div>
 }
