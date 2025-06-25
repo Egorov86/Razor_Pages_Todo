@@ -3,6 +3,13 @@
 
 @inject ITaskService taskService
 
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        <span>@Model.ErrorMessage</span>
+    </div>
+}
+
 <div class="container-fluid p-0 pb-3 mb-3 border-bottom">
     <button class="btn btn-primary new-task-button">
         <i class="bi bi-plus-circle me-1"></i>
@@ -62,6 +69,16 @@
             </p>
         </div>
         <div class="card-footer d-flex flex-row-reverse gap-2">
+            <a class="btn btn-danger" asp-page-handler="DeleteTask" asp-route-taskId="@task.Id">
+                <i class="bi bi-trash3 me-1"></i>
+                Удалить
+            </a>
+
+            <a class="btn btn-primary" asp-page="/EditTask" asp-route-id="@task.Id">
+                <i class="bi bi-pencil me-1"></i>
+                Редактировать
+            </a>
+
             @if (!task.IsDone)
             {
                 <a class="btn btn-success" asp-page-handler="ChangeTaskStatus" asp-route-taskId="@task.Id">

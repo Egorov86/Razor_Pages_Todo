@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using RazorPagesTodoList.Exceptions;
 using RazorPagesTodoList.Services;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,6 +16,9 @@ namespace RazorPagesTodoList.Pages
         }
 
         public bool ShouldShowNewTaskForm { get; set; } = false;
+
+        [BindProperty(Name = "error", SupportsGet = true)]
+        public string? ErrorMessage { get; set; }
 
         [BindProperty]
         [Required(ErrorMessage = "Задача обязательно должна иметь название")]
@@ -41,7 +45,21 @@ namespace RazorPagesTodoList.Pages
 
         public IActionResult OnGetChangeTaskStatus(int taskId)
         {
-            _taskService.ChangeTaskStatus(taskId);
+            try
+            {
+                _taskService.ChangeTaskStatus(taskId);
+            }
+            catch (TaskNotFoundException)
+            {
+                return RedirectToPage("/Index", new { error = "Некорректный идентификатор задачи" });
+            }
+
+            return RedirectToPage("/Index");
+        }
+
+        public IActionResult OnGetDeleteTask(int taskId)
+        {
+            _taskService.DeleteTask(taskId);
             return RedirectToPage("/Index");
         }
     }

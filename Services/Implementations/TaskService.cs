@@ -1,55 +1,54 @@
 ﻿using RazorPagesTodoList.Exceptions;
 using RazorPagesTodoList.Models;
+using RazorPagesTodoList.Repositories;
+using System.Security.Cryptography;
 
 namespace RazorPagesTodoList.Services.Implementations
 {
     public class TaskService : ITaskService
     {
-        private readonly List<UserTask> _tasks;
-        private int _nextTaskId;
+        private readonly ITaskRepository _taskRepository;
 
-        public TaskService()
+        public TaskService(ITaskRepository taskRepository)
         {
-            _tasks = new List<UserTask>();
-            _nextTaskId = 1;
+            _taskRepository = taskRepository;
         }
 
         public List<UserTask> GetTasks()
         {
-            return _tasks;
+            return _taskRepository.GetAll();
         }
 
         public void CreateTask(string name, string? description)
         {
             UserTask task = new UserTask()
             {
-                Id = _nextTaskId++,
                 Name = name,
                 Description = description
             };
 
-            _tasks.Add(task);
+            _taskRepository.Create(task);
         }
 
         public UserTask? GetTaskById(int id)
         {
-            foreach (UserTask task in _tasks)
-            {
-                if (task.Id == id)
-                    return task;
-            }
-
-            return null;
+            return _taskRepository.GetById(id);
         }
 
         public void ChangeTaskStatus(int id)
         {
-            UserTask? task = GetTaskById(id);
+            UserTask? task = _taskRepository.GetById(id);
 
             if (task == null)
                 throw new TaskNotFoundException(id);
 
             task.IsDone = !task.IsDone;
+            _taskRepository.SaveChanges();
+        }
+
+        public void DeleteTask(int id)
+        {
+            _taskRepository.Delete(id);
         }
     }
 }

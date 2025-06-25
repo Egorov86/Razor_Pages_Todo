@@ -1,0 +1,35 @@
+﻿@page
+@model RazorPagesTodoList.Pages.EditTaskModel
+
+<div class="container-fluid mb-3 border-bottom border-primary fs-4">
+    <p>Редактирование задачи</p>
+</div>
+
+<form method="POST">
+    <div class="mb-3">
+        <label class="form-label" asp-for="Name">Название задачи:</label>
+        <input class="form-control" asp-for="Name" />
+        <span class="text-danger" asp-validation-for="Name"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Description">Описание задачи:</label>
+        <textarea class="form-control" rows="3" asp-for="Description"></textarea>
+        <span class="text-danger" asp-validation-for="Description"></span>
+    </div>
+    <div class="mb-3 form-check">
+        <input class="form-check-input" asp-for="IsDone" />
+        <label class="form-check-label" asp-for="IsDone">Задача выполнена</label>
+        <span class="text-danger" asp-validation-for="IsDone"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="CreatedAt">Дата и время создания задачи:</label>
+        <input class="form-control" asp-for="CreatedAt" />
+        <span class="text-danger" asp-validation-for="CreatedAt"></span>
+    </div>
+    <div class="container-fluid p-0 mb-3 d-flex flex-row-reverse">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-floppy me-1"></i>
+            Сохранить
+        </button>
+    </div>
+</form>
